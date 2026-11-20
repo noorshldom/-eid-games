@@ -26,7 +26,7 @@ footer{text-align:center;color:#e7d5f1;padding:20px}
 <h2>🎊 جهّزوا الفرق</h2>
 <p>اكتبوا أسماء الفرق أو المشاركين، وافصلوا بينها بفاصلة.</p>
 <label for="teamNames">أسماء الفرق</label><input id="teamNames" placeholder="مثال: فريق النجوم، فريق الفرح، فريق العيد">
-<button class="gold" onclick="setupTeams()">ابدأ اللعب</button>
+<button class="gold" data-action="setup-teams">ابدأ اللعب</button>
 <div id="scores" class="scoreboard" aria-live="polite"></div>
 </section>
 <section class="panel">
@@ -42,7 +42,7 @@ footer{text-align:center;color:#e7d5f1;padding:20px}
 <h2 id="activityTitle">✨ ساحة اللعب</h2>
 <div id="output">اختاروا لعبة من الأعلى، وخلو الحماس يبدأ! 💜</div>
 <div id="actions"></div>
-<div style="margin-top:14px"><label for="teamSelect">الفريق الذي يستحق النقاط</label><select id="teamSelect"><option value="">أضيفوا الفرق أولًا</option></select><button class="gold" onclick="addPoints(1)">+ نقطة</button><button class="light" onclick="addPoints(3)">+ 3 نقاط</button></div>
+<div style="margin-top:14px"><label for="teamSelect">الفريق الذي يستحق النقاط</label><select id="teamSelect"><option value="">أضيفوا الفرق أولًا</option></select><button class="gold" data-action="add-point" data-points="1">+ نقطة</button><button class="light" data-action="add-point" data-points="3">+ 3 نقاط</button></div>
 </section>
 </main>
 <footer>كل عام وأنتم بخير 💜 عيدكم فرحة تجمعنا</footer>
@@ -55,18 +55,18 @@ function renderScores(){$('scores').innerHTML=teams.map(n=>'<div class="score">'
 function addPoints(n){const t=$('teamSelect').value;if(!t||scores[t]===undefined){alert('جهّزوا الفرق أولًا');return}scores[t]+=n;renderScores()}
 function show(title,html){$('activityTitle').textContent=title;$('output').innerHTML=html;$('actions').innerHTML=''}
 const challenges=['قلوا تهنئة العيد بصوت مذيع الأخبار 🎙️','مثّلوا فرحة طفل يوم العيد بدون كلام 😄','اذكروا خمسة أشياء نحبها في العيد خلال 10 ثوانٍ','قلّدوا صوت خروف العيد 🐑','غنّوا مقطعًا من شيلة أو أنشودة عيد','سوّوا حركة جماعية مضحكة خلال 5 ثوانٍ','اذكروا ثلاث حلويات تقدم في العيد','قولوا كلمة عيدية تبدأ بحرف الميم'];
-function wheelGame(){show('🎡 عجلة الحظ','<div class="wheel">🎡</div><p id="challenge">اضغطوا لف العجلة لاكتشاف التحدي!</p><button class="gold" onclick="spin()">لفّوا الآن</button>')}
+function wheelGame(){show('🎡 عجلة الحظ','<div class="wheel">🎡</div><p id="challenge">اضغطوا لف العجلة لاكتشاف التحدي!</p><button class="gold" data-action="spin">لفّوا الآن</button>')}
 function spin(){const c=challenges[Math.floor(Math.random()*challenges.length)];$('challenge').textContent=c}
 const questions=[{q:'في أي شهر هجري يأتي عيد الفطر؟',a:['شوال','رمضان','ذو الحجة'],c:0},{q:'ما اسم العيد الذي يأتي بعد الوقوف بعرفة؟',a:['عيد الفطر','عيد الأضحى','رأس السنة'],c:1},{q:'كم عدد أيام عيد الأضحى؟',a:['يومان','ثلاثة أيام','أربعة أيام'],c:2},{q:'ماذا نقول عادةً في العيد؟',a:['كل عام وأنتم بخير','تصبحون على خير','صباح النشاط'],c:0},{q:'ما الشهر الذي يسبق شوال؟',a:['محرم','رمضان','رجب'],c:1},{q:'ما اسم اليوم الذي يسبق عيد الأضحى؟',a:['يوم عرفة','يوم التروية','يوم الجمعة'],c:0}];
 let qi=0;
 function quizGame(){qi=0;nextQuestion()}
-function nextQuestion(){if(qi>=questions.length){show('🏁 انتهت الأسئلة','أحسنتم! انتهى تحدي الأسئلة.');return}const q=questions[qi];show('🧠 السؤال '+(qi+1)+' من '+questions.length,'<h3>'+q.q+'</h3><div class="options">'+q.a.map((a,i)=>'<button onclick="answerQuiz('+i+')">'+a+'</button>').join('')+'</div>')}
-function answerQuiz(i){const q=questions[qi];const ok=i===q.c;show('🧠 النتيجة',ok?'إجابة صحيحة! تستاهلون نقطة 🎉':'مو مشكلة، الإجابة الصحيحة: '+q.a[q.c]);if(ok){$('teamSelect').value&&addPoints(1)}$('actions').innerHTML='<button onclick="qi++;nextQuestion()">السؤال التالي</button>'}
+function nextQuestion(){if(qi>=questions.length){show('🏁 انتهت الأسئلة','أحسنتم! انتهى تحدي الأسئلة.');return}const q=questions[qi];show('🧠 السؤال '+(qi+1)+' من '+questions.length,'<h3>'+q.q+'</h3><div class="options">'+q.a.map((a,i)=>'<button data-action="answer-quiz" data-index="'+i+'">'+a+'</button>').join('')+'</div>')}
+function answerQuiz(i){const q=questions[qi];const ok=i===q.c;show('🧠 النتيجة',ok?'إجابة صحيحة! تستاهلون نقطة 🎉':'مو مشكلة، الإجابة الصحيحة: '+q.a[q.c]);if(ok){$('teamSelect').value&&addPoints(1)}$('actions').innerHTML='<button data-action="next-question">السؤال التالي</button>'}
 const prizes=['🎉 كسبتم 5 نقاط!','🍬 جائزة حلاوة للفريق','⭐ كسبتم 3 نقاط!','😂 تحدي: قولوا نكتة','💜 اختاروا فريقًا يشارككم نقطة','🎁 جائزة مفاجأة: تصفيق حار لكم','🌟 كسبتم نقطة إضافية!','🙌 تحدي: اذكروا أجمل ذكرى عيد'];
-function boxGame(){const chosen=prizes.splice(Math.floor(Math.random()*prizes.length),1)[0]||'عيدكم مبارك!';show('🎁 صندوق الحظ','<div class="options">'+[1,2,3,4].map((n)=>'<button onclick="openBox(this)">🎁 صندوق '+n+'</button>').join('')+'</div><p id="boxResult">اختاروا صندوقًا واحدًا فقط!</p>');window.boxPrize=chosen}
+function boxGame(){const chosen=prizes.splice(Math.floor(Math.random()*prizes.length),1)[0]||'عيدكم مبارك!';show('🎁 صندوق الحظ','<div class="options">'+[1,2,3,4].map((n)=>'<button data-action="open-box">🎁 صندوق '+n+'</button>').join('')+'</div><p id="boxResult">اختاروا صندوقًا واحدًا فقط!</p>');window.boxPrize=chosen}
 function openBox(btn){if(btn.disabled)return;document.querySelectorAll('.options button').forEach(b=>b.disabled=true);btn.classList.add('correct');$('boxResult').textContent=window.boxPrize;if(window.boxPrize.includes('5 نقاط'))addPoints(5);else if(window.boxPrize.includes('3 نقاط'))addPoints(3);else if(window.boxPrize.includes('نقطة إضافية'))addPoints(1)}
 const words=[{w:'معايدة',h:'رسالة أو عبارة نتبادلها في العيد'},{w:'كعك',h:'حلوى دائرية تقدم في المناسبات'},{w:'عيدية',h:'مبلغ نقدي يفرح به الصغار في العيد'},{w:'هلال',h:'نراه في السماء ويرتبط ببداية الشهر الهجري'},{w:'ضيافة',h:'قهوة وحلى نقدمها للزوار'}];let wi=0;
-function wordGame(){wi=Math.floor(Math.random()*words.length);const x=words[wi];show('🔤 خمن الكلمة','<p>التلميح: '+x.h+'</p><input id="guess" placeholder="اكتبوا الكلمة هنا"><button onclick="checkWord()">تحقق</button><p id="wordResult"></p>')}
+function wordGame(){wi=Math.floor(Math.random()*words.length);const x=words[wi];show('🔤 خمن الكلمة','<p>التلميح: '+x.h+'</p><input id="guess" placeholder="اكتبوا الكلمة هنا"><button data-action="check-word">تحقق</button><p id="wordResult"></p>')}
 function checkWord(){const v=$('guess').value.trim();const x=words[wi];if(v===x.w){$('wordResult').textContent='صح عليكم! الكلمة هي '+x.w+' 🎉';addPoints(2)}else $('wordResult').textContent='مو هي، حاولوا مرة ثانية! 💡'}
 
 document.addEventListener('DOMContentLoaded',()=>{
@@ -74,6 +74,26 @@ document.addEventListener('DOMContentLoaded',()=>{
   bind('wheelBtn',wheelGame);bind('quizBtn',quizGame);bind('boxBtn',boxGame);bind('wordBtn',wordGame);
 });
 window.addEventListener('error',e=>{const out=document.getElementById('output');if(out)out.textContent='حدث خطأ في تشغيل الموقع: '+(e.message||'خطأ غير معروف')});
+
+document.addEventListener('click',function(event){
+ const b=event.target.closest('[data-action]');if(!b)return;
+ const action=b.dataset.action;
+ try{
+ switch(action){
+ case 'setup-teams':setupTeams();break;
+ case 'wheel-game':wheelGame();break;
+ case 'quiz-game':quizGame();break;
+ case 'box-game':boxGame();break;
+ case 'word-game':wordGame();break;
+ case 'add-point':addPoints(Number(b.dataset.points||1));break;
+ case 'spin':spin();break;
+ case 'answer-quiz':answerQuiz(Number(b.dataset.index));break;
+ case 'next-question':qi++;nextQuestion();break;
+ case 'open-box':openBox(b);break;
+ case 'check-word':checkWord();break;
+ }
+ }catch(error){show('تعذر تشغيل اللعبة','حدث خطأ: '+error.message)}
+});
 </script>
 </body>
 </html>
