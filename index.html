@@ -57,8 +57,20 @@ function show(title,html){$('activityTitle').textContent=title;$('output').inner
 const challenges=['قلوا تهنئة العيد بصوت مذيع الأخبار 🎙️','مثّلوا فرحة طفل يوم العيد بدون كلام 😄','اذكروا خمسة أشياء نحبها في العيد خلال 10 ثوانٍ','قلّدوا صوت خروف العيد 🐑','غنّوا مقطعًا من شيلة أو أنشودة عيد','سوّوا حركة جماعية مضحكة خلال 5 ثوانٍ','اذكروا ثلاث حلويات تقدم في العيد','قولوا كلمة عيدية تبدأ بحرف الميم'];
 function wheelGame(){show('🎡 عجلة الحظ','<div class="wheel-wrap"><div class="wheel-pointer">▼</div><div class="wheel" id="wheelVisual">🎡</div></div><p id="challenge">اضغطوا لف العجلة لاكتشاف التحدي!</p><button class="gold" id="spinBtn" data-action="spin">لفّوا الآن</button>')}
 function spin(){const btn=$('spinBtn'),wheel=$('wheelVisual'),label=$('challenge');if(!btn||!wheel||btn.disabled)return;btn.disabled=true;btn.textContent='🎡 العجلة تدور...';const index=Math.floor(Math.random()*challenges.length);const stop=index*45+22.5;wheel.style.transform='rotate('+(360*6+stop)+'deg)';setTimeout(()=>{label.textContent='🎉 التحدي: '+challenges[index];btn.textContent='لفّوا مرة أخرى';btn.disabled=false;wheel.style.transition='transform 1s ease';wheel.style.transform='rotate('+(stop)+'deg)';setTimeout(()=>{wheel.style.transition='transform 4.2s cubic-bezier(.12,.72,.12,1)'},50)},4300)}
-const questions=[{q:'في أي شهر هجري يأتي عيد الفطر؟',a:['شوال','رمضان','ذو الحجة'],c:0},{q:'ما اسم العيد الذي يأتي بعد الوقوف بعرفة؟',a:['عيد الفطر','عيد الأضحى','رأس السنة'],c:1},{q:'كم عدد أيام عيد الأضحى؟',a:['يومان','ثلاثة أيام','أربعة أيام'],c:2},{q:'ماذا نقول عادةً في العيد؟',a:['كل عام وأنتم بخير','تصبحون على خير','صباح النشاط'],c:0},{q:'ما الشهر الذي يسبق شوال؟',a:['محرم','رمضان','رجب'],c:1},{q:'ما اسم اليوم الذي يسبق عيد الأضحى؟',a:['يوم عرفة','يوم التروية','يوم الجمعة'],c:0}];
-let qi=0;
+const questions=[
+{q:'ما اسم الشهر الذي يأتي فيه عيد الفطر؟',a:['شوال','رمضان','محرم'],c:0},
+{q:'كم يومًا نصوم في شهر رمضان؟',a:['29 أو 30 يومًا','15 يومًا','10 أيام'],c:0},
+{q:'ما الصلاة التي تؤدى صباح يوم عيد الفطر؟',a:['صلاة العيد','صلاة التراويح','صلاة الاستسقاء'],c:0},
+{q:'متى تُخرج زكاة الفطر؟',a:['قبل صلاة العيد','بعد صلاة العيد بأسبوع','في منتصف شوال'],c:0},
+{q:'ما اسم العيد الذي يأتي بعد شهر رمضان؟',a:['عيد الفطر','عيد الأضحى','اليوم الوطني'],c:0},
+{q:'ماذا يُستحب أن نأكل قبل صلاة عيد الفطر؟',a:['تمرًا','لا شيء','وجبة غداء كاملة'],c:0},
+{q:'ما العبارة الشائعة للتهنئة بعيد الفطر؟',a:['عيدكم مبارك','جمعة مباركة','حج مبرور'],c:0},
+{q:'ما الشهر الذي يسبق شهر شوال؟',a:['رمضان','ذو القعدة','صفر'],c:0},
+{q:'ما العيدية التي يفرح بها الأطفال غالبًا؟',a:['مبلغ من المال','كتاب مدرسي','ملابس رياضية فقط'],c:0},
+{q:'أي من هذه الحلويات تُقدّم كثيرًا في عيد الفطر؟',a:['كعك العيد','شوربة','سلطة'],c:0},
+{q:'ماذا يفعل المسلمون غالبًا بعد صلاة العيد؟',a:['يتبادلون التهاني ويزورون الأقارب','يذهبون إلى المدرسة','يستعدون للصيام'],c:0},
+{q:'كم عدد التكبيرات في صلاة العيد في الركعة الأولى، غير تكبيرة الإحرام، على المشهور؟',a:['سبع تكبيرات','تكبيرتان','عشر تكبيرات'],c:0}
+];let qi=0;
 function quizGame(){qi=0;nextQuestion()}
 function nextQuestion(){if(qi>=questions.length){show('🏁 انتهت الأسئلة','أحسنتم! انتهى تحدي الأسئلة.');return}const q=questions[qi];show('🧠 السؤال '+(qi+1)+' من '+questions.length,'<h3>'+q.q+'</h3><div class="options">'+q.a.map((a,i)=>'<button data-action="answer-quiz" data-index="'+i+'">'+a+'</button>').join('')+'</div>')}
 function answerQuiz(i){const q=questions[qi];const ok=i===q.c;show('🧠 النتيجة',ok?'إجابة صحيحة! تستاهلون نقطة 🎉':'مو مشكلة، الإجابة الصحيحة: '+q.a[q.c]);if(ok){$('teamSelect').value&&addPoints(1)}$('actions').innerHTML='<button data-action="next-question">السؤال التالي</button>'}
