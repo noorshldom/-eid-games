@@ -32,10 +32,10 @@ footer{text-align:center;color:#e7d5f1;padding:20px}
 <section class="panel">
 <h2>🎮 اختاروا فعاليتكم</h2>
 <div class="games">
-<article class="game"><div class="emoji">🎡</div><h2>عجلة الحظ</h2><p>لفّوا العجلة وخذوا تحديًا عشوائيًا ينفذه الفريق.</p><button onclick="wheelGame()">لف العجلة</button></article>
-<article class="game"><div class="emoji">🧠</div><h2>تحدي الأسئلة</h2><p>أسئلة خفيفة عن العيد ومعلومات عامة. جاوبوا واجمعوا النقاط.</p><button onclick="quizGame()">ابدأ الأسئلة</button></article>
-<article class="game"><div class="emoji">🎁</div><h2>صندوق الحظ</h2><p>اختاروا صندوقًا واكتشفوا جائزتكم أو التحدي المفاجئ.</p><button onclick="boxGame()">افتح صندوقًا</button></article>
-<article class="game"><div class="emoji">🔤</div><h2>خمن الكلمة</h2><p>اقرؤوا التلميح وحاولوا معرفة الكلمة المخفية.</p><button onclick="wordGame()">ابدأ التخمين</button></article>
+<article class="game"><div class="emoji">🎡</div><h2>عجلة الحظ</h2><p>لفّوا العجلة وخذوا تحديًا عشوائيًا ينفذه الفريق.</p><button id="wheelBtn">لف العجلة</button></article>
+<article class="game"><div class="emoji">🧠</div><h2>تحدي الأسئلة</h2><p>أسئلة خفيفة عن العيد ومعلومات عامة. جاوبوا واجمعوا النقاط.</p><button id="quizBtn">ابدأ الأسئلة</button></article>
+<article class="game"><div class="emoji">🎁</div><h2>صندوق الحظ</h2><p>اختاروا صندوقًا واكتشفوا جائزتكم أو التحدي المفاجئ.</p><button id="boxBtn">افتح صندوقًا</button></article>
+<article class="game"><div class="emoji">🔤</div><h2>خمن الكلمة</h2><p>اقرؤوا التلميح وحاولوا معرفة الكلمة المخفية.</p><button id="wordBtn">ابدأ التخمين</button></article>
 </div>
 </section>
 <section class="panel">
@@ -68,6 +68,12 @@ function openBox(btn){if(btn.disabled)return;document.querySelectorAll('.options
 const words=[{w:'معايدة',h:'رسالة أو عبارة نتبادلها في العيد'},{w:'كعك',h:'حلوى دائرية تقدم في المناسبات'},{w:'عيدية',h:'مبلغ نقدي يفرح به الصغار في العيد'},{w:'هلال',h:'نراه في السماء ويرتبط ببداية الشهر الهجري'},{w:'ضيافة',h:'قهوة وحلى نقدمها للزوار'}];let wi=0;
 function wordGame(){wi=Math.floor(Math.random()*words.length);const x=words[wi];show('🔤 خمن الكلمة','<p>التلميح: '+x.h+'</p><input id="guess" placeholder="اكتبوا الكلمة هنا"><button onclick="checkWord()">تحقق</button><p id="wordResult"></p>')}
 function checkWord(){const v=$('guess').value.trim();const x=words[wi];if(v===x.w){$('wordResult').textContent='صح عليكم! الكلمة هي '+x.w+' 🎉';addPoints(2)}else $('wordResult').textContent='مو هي، حاولوا مرة ثانية! 💡'}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  const bind=(id,fn)=>{const b=document.getElementById(id);if(b)b.addEventListener('click',()=>{try{fn()}catch(e){show('حدث خطأ', 'تعذر تشغيل اللعبة: '+e.message)}})};
+  bind('wheelBtn',wheelGame);bind('quizBtn',quizGame);bind('boxBtn',boxGame);bind('wordBtn',wordGame);
+});
+window.addEventListener('error',e=>{const out=document.getElementById('output');if(out)out.textContent='حدث خطأ في تشغيل الموقع: '+(e.message||'خطأ غير معروف')});
 </script>
 </body>
 </html>
