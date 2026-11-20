@@ -69,10 +69,17 @@ const words=[{w:'معايدة',h:'رسالة أو عبارة نتبادلها ف
 function wordGame(){wi=Math.floor(Math.random()*words.length);const x=words[wi];show('🔤 خمن الكلمة','<p>التلميح: '+x.h+'</p><input id="guess" placeholder="اكتبوا الكلمة هنا"><button data-action="check-word">تحقق</button><p id="wordResult"></p>')}
 function checkWord(){const v=$('guess').value.trim();const x=words[wi];if(v===x.w){$('wordResult').textContent='صح عليكم! الكلمة هي '+x.w+' 🎉';addPoints(2)}else $('wordResult').textContent='مو هي، حاولوا مرة ثانية! 💡'}
 
-document.addEventListener('DOMContentLoaded',()=>{
-  const bind=(id,fn)=>{const b=document.getElementById(id);if(b)b.addEventListener('click',()=>{try{fn()}catch(e){show('حدث خطأ', 'تعذر تشغيل اللعبة: '+e.message)}})};
-  bind('wheelBtn',wheelGame);bind('quizBtn',quizGame);bind('boxBtn',boxGame);bind('wordBtn',wordGame);
-});
+// ربط أزرار الألعاب مباشرة بعد تحميل عناصر الصفحة (السكريبت موجود أسفل الصفحة)
+(function bindGameButtons(){
+  const bind=(id,fn)=>{
+    const b=document.getElementById(id);
+    if(b) b.onclick=function(event){event.preventDefault();try{fn()}catch(e){show('حدث خطأ','تعذر تشغيل اللعبة: '+e.message)}};
+  };
+  bind('wheelBtn',wheelGame);
+  bind('quizBtn',quizGame);
+  bind('boxBtn',boxGame);
+  bind('wordBtn',wordGame);
+})();
 window.addEventListener('error',e=>{const out=document.getElementById('output');if(out)out.textContent='حدث خطأ في تشغيل الموقع: '+(e.message||'خطأ غير معروف')});
 
 document.addEventListener('click',function(event){
